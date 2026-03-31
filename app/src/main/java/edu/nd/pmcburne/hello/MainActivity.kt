@@ -6,30 +6,36 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import edu.nd.pmcburne.hello.data.CampusLocation
 import edu.nd.pmcburne.hello.ui.theme.MyApplicationTheme
+import androidx.compose.foundation.background
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerInfoWindowContent
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import androidx.compose.runtime.mutableStateOf
@@ -138,11 +144,30 @@ fun CampusMap(
         cameraPositionState = cameraPositionState
     ) {
         locations.forEach { location ->
-            Marker(
+            MarkerInfoWindowContent(
                 state = MarkerState(position = LatLng(location.latitude, location.longitude)),
                 title = location.name,
                 snippet = location.description
-            )
+            ) {
+                Column(
+                    modifier = Modifier
+                        .widthIn(max = 280.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(MaterialTheme.colorScheme.surface)
+                        .padding(10.dp)
+                ) {
+                    Text(
+                        text = location.name,
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                    Text(
+                        text = location.description,
+                        style = MaterialTheme.typography.bodySmall,
+                        maxLines = Int.MAX_VALUE,
+                        overflow = TextOverflow.Clip
+                    )
+                }
+            }
         }
     }
 }
